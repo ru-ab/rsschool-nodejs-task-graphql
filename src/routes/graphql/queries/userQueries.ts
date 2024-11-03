@@ -3,7 +3,9 @@ import {
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLObjectType,
+  GraphQLResolveInfo,
   GraphQLString,
+  Kind,
 } from 'graphql';
 import { Context } from '../gqlSchema.js';
 import { UUIDType } from '../types/uuid.js';
@@ -65,7 +67,47 @@ export const user = new GraphQLObjectType({
 export const userQueries = {
   users: {
     type: new GraphQLList(user),
-    resolve: (_source, args, { prisma }: Context) => prisma.user.findMany(),
+    resolve: async (
+      _source,
+      args,
+      { prisma, loaders }: Context,
+      info: GraphQLResolveInfo,
+    ) => {
+      const requestedFields = info.fieldNodes
+        .filter((fieldNode) => !!fieldNode.selectionSet)
+        .map((fieldNode) => {
+          return fieldNode
+            .selectionSet!.selections.map((selection) =>
+              selection.kind === Kind.FIELD ? selection.name.value : null,
+            )
+            .filter((selection) => selection !== null);
+        });
+
+      const subscribedToUser = requestedFields[0].includes('subscribedToUser');
+      const userSubscribedTo = requestedFields[0].includes('userSubscribedTo');
+
+      const users = await prisma.user.findMany({
+        include: { subscribedToUser, userSubscribedTo },
+      });
+
+      users.forEach((user) => {
+        if (subscribedToUser) {
+          const subscribers = Array.from(user.subscribedToUser).map((subscription) =>
+            users.filter((subscriber) => subscription.subscriberId === subscriber.id),
+          );
+          loaders.subscribedToUser.prime(user.id, subscribers);
+        }
+
+        if (userSubscribedTo) {
+          const authors = Array.from(user.userSubscribedTo).map((subscription) =>
+            users.filter((author) => subscription.authorId === author.id),
+          );
+          loaders.userSubscribedTo.prime(user.id, authors);
+        }
+      });
+
+      return users;
+    },
   },
   user: {
     type: user,
