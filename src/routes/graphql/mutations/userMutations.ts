@@ -5,9 +5,9 @@ import {
   GraphQLNonNull,
   GraphQLString,
 } from 'graphql';
-import { user } from '../query.js';
 import { Context } from '../gqlSchema.js';
 import { UUIDType } from '../types/uuid.js';
+import { user } from '../queries/userQueries.js';
 
 type UserInputDto = {
   name: string;

@@ -4,9 +4,9 @@ import {
   GraphQLNonNull,
   GraphQLString,
 } from 'graphql';
-import { post } from '../query.js';
 import { Context } from '../gqlSchema.js';
 import { UUIDType } from '../types/uuid.js';
+import { post } from '../queries/postQueries.js';
 
 type PostInputDto = {
   title: string;

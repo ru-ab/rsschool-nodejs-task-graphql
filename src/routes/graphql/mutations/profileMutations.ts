@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 import { Context } from '../gqlSchema.js';
 import { UUIDType } from '../types/uuid.js';
-import { profile } from '../query.js';
+import { profile } from '../queries/profileQueries.js';
 
 type ProfileInputDto = {
   isMale: boolean;
