@@ -1,11 +1,11 @@
-import { GraphQLList, GraphQLObjectType, GraphQLString } from 'graphql';
+import { GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 import { Context } from '../gqlSchema.js';
 import { UUIDType } from '../types/uuid.js';
 
 export const post = new GraphQLObjectType({
   name: 'Post',
   fields: () => ({
-    id: { type: GraphQLString },
+    id: { type: UUIDType },
     title: { type: GraphQLString },
     content: { type: GraphQLString },
     authorId: { type: GraphQLString },
@@ -21,7 +21,7 @@ export const postQueries = {
     type: post,
     args: {
       id: {
-        type: UUIDType,
+        type: new GraphQLNonNull(UUIDType),
       },
     },
     resolve: (_source, { id }: { id: string }, { loaders }: Context) =>

@@ -2,8 +2,8 @@ import {
   GraphQLBoolean,
   GraphQLInt,
   GraphQLList,
+  GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLString,
 } from 'graphql';
 import { MemberTypeId } from '../../member-types/schemas.js';
 import { Context } from '../gqlSchema.js';
@@ -13,7 +13,7 @@ import { memberType } from './memberTypeQueries.js';
 export const profile = new GraphQLObjectType({
   name: 'Profile',
   fields: () => ({
-    id: { type: GraphQLString },
+    id: { type: UUIDType },
     isMale: { type: GraphQLBoolean },
     yearOfBirth: { type: GraphQLInt },
     memberType: {
@@ -33,7 +33,7 @@ export const profileQueries = {
     type: profile,
     args: {
       id: {
-        type: UUIDType,
+        type: new GraphQLNonNull(UUIDType),
       },
     },
     resolve: (_source, { id }: { id: string }, { loaders }: Context) =>

@@ -3,6 +3,7 @@ import {
   GraphQLFloat,
   GraphQLInt,
   GraphQLList,
+  GraphQLNonNull,
   GraphQLObjectType,
 } from 'graphql';
 import { MemberTypeId } from '../../member-types/schemas.js';
@@ -38,7 +39,7 @@ export const memberTypeQueries = {
     type: memberType,
     args: {
       id: {
-        type: memberTypeId,
+        type: new GraphQLNonNull(memberTypeId),
       },
     },
     resolve: (_source, { id }: { id: MemberTypeId }, { loaders }: Context) =>

@@ -2,6 +2,7 @@ import {
   GraphQLFloat,
   GraphQLInterfaceType,
   GraphQLList,
+  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLResolveInfo,
   GraphQLString,
@@ -15,7 +16,7 @@ import { profile } from './profileQueries.js';
 const userInterface: GraphQLInterfaceType = new GraphQLInterfaceType({
   name: 'UserInterface',
   fields: () => ({
-    id: { type: GraphQLString },
+    id: { type: UUIDType },
     name: { type: GraphQLString },
     balance: { type: GraphQLFloat },
     profile: {
@@ -38,7 +39,7 @@ export const user = new GraphQLObjectType({
   name: 'User',
   interfaces: [userInterface],
   fields: () => ({
-    id: { type: GraphQLString },
+    id: { type: UUIDType },
     name: { type: GraphQLString },
     balance: { type: GraphQLFloat },
     profile: {
@@ -113,7 +114,7 @@ export const userQueries = {
     type: user,
     args: {
       id: {
-        type: UUIDType,
+        type: new GraphQLNonNull(UUIDType),
       },
     },
     resolve: (_source, { id }: { id: string }, { loaders }: Context) =>
